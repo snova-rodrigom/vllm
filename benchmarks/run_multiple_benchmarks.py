@@ -16,7 +16,7 @@ tokenizer_mapping = {
     # "Meta-Llama-3.2-3B-Instruct": "unsloth/Llama-3.2-3B-Instruct",
     # "Meta-Llama-3.1-8B-Instruct": "unsloth/Llama-3.1-8B-Instruct",
     # "Meta-Llama-3.1-70B-Instruct": "unsloth/Meta-Llama-3.1-70B-Instruct",
-    # "Meta-Llama-3.3-70B-Instruct": "unsloth/Llama-3.3-70B-Instruct",
+    "Meta-Llama-3.3-70B-Instruct": "meta-llama/Llama-3.3-70B-Instruct",
     # "Meta-Llama-3.1-405B-Instruct": "unsloth/Meta-Llama-3.1-405B-Instruct-bnb-4bit",
     # Meta models
     "meta-llama/Llama-3.2-1B-Instruct": "meta-llama/Llama-3.2-1B-Instruct",
@@ -25,30 +25,29 @@ tokenizer_mapping = {
 # set openai api key: export OPENAI_API_KEY="..."
 
 # Fixed parameters
-backend = "vllm"
-# backend = "openai-chat"
+# backend = "vllm"
+backend = "openai-chat"
 request_rate = "inf"
-time_delay = 0
+time_delay = 10
 
 base_command = [
     "python", "benchmarks/benchmark_serving.py",
     "--backend", backend,
-    # "--base-url", "https://api.sambanova.ai/",
-    # "--base-url", "https://tnxyqiwofh6p.cloud.snova.ai/",
-    "--endpoint", "/v1/completions",
-    "--ignore-eos",
+    # "--endpoint", "/v1/completions",
+    "--base-url", "https://api.sambanova.ai/",
+    "--endpoint", "v1/chat/completions",
+    # "--ignore-eos",
     f"--request-rate={request_rate}",
     
     # random parameters
-    "--dataset-name", "random",
+    # "--dataset-name", "random",
     # sonnet parameters
-    # "--dataset-name", "sonnet",
-    # "--dataset-path", "benchmarks/benchmarking_kit_prompt.txt",
-    # "--dataset-path", "benchmarks/sonnet.txt",
+    "--dataset-name", "sonnet",
+    "--dataset-path", "./benchmarks/sonnet.txt",
     
     "--save-result",
     "--save-detailed",
-    "--result-dir", "/mnt/space/rodrigom/vllm/benchmarks/results/llama3.2-1b/llama3.2-1b-tp1-bf16-nocaching-random"
+    "--result-dir", "/mnt/space/rodrigom/vllm/benchmarks/results/llama3.3-70b/llama3.3-70b-rdu-sonnet"
 ]
 
 
@@ -60,11 +59,11 @@ for model, input_len, output_len, num_prompts, max_concurrency in zip(model_conf
         "--model", tokenizer_mapping[model],
         
         # random parameters
-        "--random-input-len", str(input_len),
-        "--random-output-len", str(output_len),
+        # "--random-input-len", str(input_len),
+        # "--random-output-len", str(output_len),
         # sonnet parameters
-        # "--sonnet-input-len", str(input_len),
-        # "--sonnet-output-len", str(output_len),
+        "--sonnet-input-len", str(input_len),
+        "--sonnet-output-len", str(output_len),
         
         "--num-prompts", str(num_prompts),
         "--max-concurrency", str(max_concurrency),
