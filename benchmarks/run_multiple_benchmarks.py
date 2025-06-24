@@ -45,9 +45,9 @@ base_command = [
     "--dataset-name", "sonnet",
     "--dataset-path", "./benchmarks/sonnet.txt",
     
-    "--save-result",
-    "--save-detailed",
-    "--result-dir", "/mnt/space/rodrigom/vllm/benchmarks/results/llama3.3-70b/llama3.3-70b-rdu-sonnet"
+    # "--save-result",
+    # "--save-detailed",
+    # "--result-dir", "/mnt/space/rodrigom/vllm/benchmarks/results/llama3.3-70b/llama3.3-70b-rdu-sonnet"
 ]
 
 
@@ -59,7 +59,7 @@ for model, input_len, output_len, num_prompts, max_concurrency in zip(model_conf
         "--model", tokenizer_mapping[model],
         
         # random parameters
-        # "--random-input-len", str(input_len),
+        # "--random-input-len", str(input_len), 
         # "--random-output-len", str(output_len),
         # sonnet parameters
         "--sonnet-input-len", str(input_len),
@@ -67,7 +67,7 @@ for model, input_len, output_len, num_prompts, max_concurrency in zip(model_conf
         
         "--num-prompts", str(num_prompts),
         "--max-concurrency", str(max_concurrency),
-        "--result-filename", f"{backend}_{request_rate}qps_{model.replace('/','-')}_{input_len}_{output_len}_{num_prompts}_{max_concurrency}.json",
+        # "--result-filename", f"{backend}_{request_rate}qps_{model.replace('/','-')}_{input_len}_{output_len}_{num_prompts}_{max_concurrency}.json",
     ]
     subprocess.run(command)
     time.sleep(min(time_delay,num_prompts))  # Optional: sleep to avoid overwhelming the server
