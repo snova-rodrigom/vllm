@@ -20,23 +20,26 @@ tokenizer_mapping = {
     # "Meta-Llama-3.1-405B-Instruct": "unsloth/Meta-Llama-3.1-405B-Instruct-bnb-4bit",
     # Meta models
     "meta-llama/Llama-3.2-1B-Instruct": "meta-llama/Llama-3.2-1B-Instruct",
+    # Speculative decoding models
+    "/mnt/remote/checkpoints/Llama-3.3-70B-Instruct": "meta-llama/Llama-3.3-70B-Instruct",
 }
 
 # set openai api key: export OPENAI_API_KEY="..."
 
 # Fixed parameters
-# backend = "vllm"
-backend = "openai-chat"
+backend = "vllm"
+# backend = "openai-chat"
 request_rate = "inf"
 time_delay = 10
 
 base_command = [
     "python", "benchmarks/benchmark_serving.py",
     "--backend", backend,
-    # "--endpoint", "/v1/completions",
-    "--base-url", "https://api.sambanova.ai/",
-    "--endpoint", "v1/chat/completions",
-    # "--ignore-eos",
+    "--base-url", "http://127.0.0.1:8000/",
+    "--endpoint", "v1/completions",
+    # "--base-url", "https://api.sambanova.ai/",
+    # "--endpoint", "v1/chat/completions",
+    "--ignore-eos",
     f"--request-rate={request_rate}",
     
     # random parameters
@@ -45,9 +48,9 @@ base_command = [
     "--dataset-name", "sonnet",
     "--dataset-path", "./benchmarks/sonnet.txt",
     
-    # "--save-result",
-    # "--save-detailed",
-    # "--result-dir", "/mnt/space/rodrigom/vllm/benchmarks/results/llama3.3-70b/llama3.3-70b-rdu-sonnet"
+    "--save-result",
+    "--save-detailed",
+    "--result-dir", "/mnt/space/rodrigom/vllm/benchmarks/results/llama3.3-70b/llama3.3-70b-sd-llama3.2-1b-tp4-bf16-sonnet"
 ]
 
 
@@ -67,7 +70,7 @@ for model, input_len, output_len, num_prompts, max_concurrency in zip(model_conf
         
         "--num-prompts", str(num_prompts),
         "--max-concurrency", str(max_concurrency),
-        # "--result-filename", f"{backend}_{request_rate}qps_{model.replace('/','-')}_{input_len}_{output_len}_{num_prompts}_{max_concurrency}.json",
+        "--result-filename", f"{backend}_{request_rate}qps_{model.replace('/','-')}_{input_len}_{output_len}_{num_prompts}_{max_concurrency}.json",
     ]
     subprocess.run(command)
-    time.sleep(min(time_delay,num_prompts))  # Optional: sleep to avoid overwhelming the server
+    time.sleep(min(time_delay,120))  # Optional: sleep to avoid overwhelming the server
